@@ -1,0 +1,49 @@
+services:
+  backend:
+    build: .
+    env_file:
+      - sdapp/.env
+      - postgres/.env
+    ports:
+      - "8000:80"
+    volumes:
+      - "./sdapp/static:/app/sdapp/static"
+
+    depends_on:
+      - postgres
+    links:
+      - "postgres:db"
+
+  postgres:
+    image: postgres
+    env_file: postgres/.env
+    volumes:
+      - "db_data:/var/lib/postgres/data"
+
+  dramatiq:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+
+    depends_on:
+      - postgres
+
+    links:
+      - "postgres:db"
+
+    command: "sh /dramatiq-entrypoint.sh"
+    env_file: 
+      - dramatiq/.env
+      - sdapp/.env
+      - postgres/.env
+
+    volumes:
+      - "./dramatiq/dramatiq-entrypoint.sh:/dramatiq-entrypoint.sh"
+      - "./dramatiq/huggingface:/root/.cache/huggingface"
+      - "./sdapp/static:/app/sdapp/static"
+
+  redis:
+    image: redis
+
+volumes:
+  db_data: 

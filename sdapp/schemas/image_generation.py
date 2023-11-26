@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 class GeneratedImageBase(BaseModel):
     prompt: str
+    negative_prompt: str | None
 
     class Config:
         from_attributes = True

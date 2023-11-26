@@ -27,6 +27,8 @@ class GeneratedImage(Base):
     progress: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     prompt: Mapped[str] = mapped_column(Text, nullable=False)
+    negative_prompt: Mapped[str] = mapped_column(Text, nullable=True)
+
     num_steps: Mapped[int] = mapped_column(Integer, nullable=False, default=50)
 
     file_name: Mapped[str | None] = mapped_column(String(255), nullable=True)

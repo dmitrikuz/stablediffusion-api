@@ -32,4 +32,6 @@ class TextToImage:
     ) -> Image.Image:
         if not self.pipe:
             raise RuntimeError("Pipeline is not loaded")
-        return self.pipe(prompt, callback_on_step_end=callback).images[0]
+        return self.pipe(
+            prompt, negative_prompt=negative_prompt, callback_on_step_end=callback
+        ).images[0]

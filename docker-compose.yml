@@ -1,4 +1,12 @@
 services:
+  postgres:
+    image: postgres
+    env_file: postgres/.env
+    volumes:
+      - "db_data:/var/lib/postgres/data"
+    networks:
+      - default
+
   backend:
     build: .
     env_file:
@@ -8,28 +16,14 @@ services:
       - "8000:80"
     volumes:
       - "./sdapp/static:/app/sdapp/static"
-
-    depends_on:
-      - postgres
-    links:
-      - "postgres:db"
-
-  postgres:
-    image: postgres
-    env_file: postgres/.env
-    volumes:
-      - "db_data:/var/lib/postgres/data"
+      - "./alembic:/app/alembic"
+    networks:
+      - default
 
   dramatiq:
     build:
       context: .
       dockerfile: ./Dockerfile
-
-    depends_on:
-      - postgres
-
-    links:
-      - "postgres:db"
 
     command: "sh /dramatiq-entrypoint.sh"
     env_file: 
@@ -41,9 +35,17 @@ services:
       - "./dramatiq/dramatiq-entrypoint.sh:/dramatiq-entrypoint.sh"
       - "./dramatiq/huggingface:/root/.cache/huggingface"
       - "./sdapp/static:/app/sdapp/static"
+    networks:
+      - default
 
   redis:
     image: redis
+    networks:
+      - default
 
 volumes:
   db_data: 
+
+networks:
+  default:
+    driver: "bridge"

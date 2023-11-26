@@ -1,2 +1,2 @@
 # stablediffusion-api
-API for images generation using Stable Diffusion
+FastAPI application for image generation using Stable Diffusion

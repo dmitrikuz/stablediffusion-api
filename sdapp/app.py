@@ -3,12 +3,12 @@ import pathlib
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+
 from sdapp.logger import logger
 from sdapp.routers.images import router as images_router
 from sdapp.routers.users import router as users_router
 from sdapp.settings import settings
-
-STATIC_ROOT = pathlib.Path(__file__).resolve().parent / "static"
+from sdapp.storage import STATIC_ROOT
 
 
 @contextlib.asynccontextmanager

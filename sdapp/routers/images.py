@@ -1,4 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql import select
+
 from sdapp.db import get_async_session
 from sdapp.models import GeneratedImage
 from sdapp.schemas.image_generation import (
@@ -6,12 +9,8 @@ from sdapp.schemas.image_generation import (
     GeneratedImageRead,
     GeneratedImageURL,
 )
-
-# from fastapitest.settings import settings
 from sdapp.storage import Storage
 from sdapp.workers.worker import text_to_image_task
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql import select
 
 router = APIRouter()
 
@@ -34,7 +33,7 @@ async def get_storage() -> Storage:
 
 
 @router.post(
-    "/images",
+    "/",
     response_model=GeneratedImageRead,
     status_code=status.HTTP_202_ACCEPTED,
 )
@@ -51,14 +50,14 @@ async def generate_image(
     return image
 
 
-@router.get("/images/{id}", response_model=GeneratedImageRead)
+@router.get("/{id}", response_model=GeneratedImageRead)
 async def get_generated_image(
     image: GeneratedImage = Depends(get_generated_image_or_404),
 ) -> GeneratedImage:
     return image
 
 
-@router.get("/images/{id}/url")
+@router.get("/{id}/url")
 async def get_generated_image_url(
     request: Request,
     image: GeneratedImage = Depends(get_generated_image_or_404),
